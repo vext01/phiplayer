@@ -1,24 +1,31 @@
-import subprocess, sys, re
+import subprocess, sys, re, os
 import urwid
 import broadcast
 
 GET_IPLAYER="get_iplayer"
 class PhiPlayerError(Exception): pass
 
-def item_chosen(button):
-    print(button.label)
+def item_chosen(button, udata):
+    stream(udata.pid)
 
 # XXX make menu items prettier
 def mk_menu(title, items):
     body = [urwid.Text(title), urwid.Divider()]
 
-    for c in items:
-        button = urwid.Button(c, on_press=item_chosen)
-        button._w = urwid.AttrMap(urwid.SelectableIcon(c, 1),
+    for item in items:
+        item_str = str(item)
+        button = urwid.Button(item_str)
+        urwid.connect_signal(button, 'click', item_chosen, item)
+        button._w = urwid.AttrMap(urwid.SelectableIcon(item_str, 1),
                 None, focus_map='reversed')
         body.append(urwid.AttrMap(button, None, focus_map='reversed'))
 
     return urwid.ListBox(urwid.SimpleFocusListWalker(body))
+
+# XXX asumes mplayer for now
+def stream(pid):
+    #raise urwid.ExitMainLoop
+    os.system("%s --stream --player='mplayer -' %s" % (GET_IPLAYER, pid))
 
 def get_broadcast_list():
     pipe = subprocess.Popen(GET_IPLAYER,
@@ -43,8 +50,7 @@ if __name__ == "__main__":
     if not bcasts: raise PhiPlayerError("Could not find any broadcasts")
 
     # build a simple menu
-    items = [ broadcast_menu_str(x) for x in bcasts ]
-    main = urwid.Padding(mk_menu("Broadcasts", items), left=0, right=0)
+    main = urwid.Padding(mk_menu("Broadcasts", bcasts), left=0, right=0)
 
     # build the toplevel ui
     top = urwid.Overlay(main, urwid.SolidFill(u'\N{MEDIUM SHADE}'),

@@ -27,5 +27,4 @@ class Broadcast(object):
 
     def __str__(self):
         cats = ", ".join(self.categs)
-        return ("pid: %s\n\ttitle: %s\n\tdescr: %s\n\tcategories: %s" % \
-                (self.pid, self.title, self.descr, cats))
+        return "%s:%s - %s, %s" % (self.pid, self.title, self.descr, cats)
