@@ -25,7 +25,9 @@ def mk_menu(title, items):
 # XXX asumes mplayer for now
 def stream(pid):
     #raise urwid.ExitMainLoop
+    screen.stop()
     os.system("%s --stream --player='mplayer -' %s" % (GET_IPLAYER, pid))
+    screen.start()
 
 def get_broadcast_list():
     pipe = subprocess.Popen(GET_IPLAYER,
@@ -58,4 +60,5 @@ if __name__ == "__main__":
             valign='middle', height=('relative', 100))
 
     # let's go
-    urwid.MainLoop(top, palette=[('reversed', 'standout', '')]).run()
+    screen = urwid.raw_display.Screen()
+    urwid.MainLoop(top, palette=[('reversed', 'standout', '')], screen=screen).run()
