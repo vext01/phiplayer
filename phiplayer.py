@@ -1,4 +1,5 @@
 import urwid
+import broadcast
 
 def item_chosen(button, choice):
     print("Chose: %s" % choice)
@@ -15,6 +16,13 @@ def mk_menu(title, items):
     return urwid.ListBox(urwid.SimpleFocusListWalker(body))
 
 if __name__ == "__main__":
+    line = "1051:   ZingZillas: Series 3 - 17. Like a Firefly, CBeebies, Children's,Entertainment & Comedy,Learning,Pre-School,TV, default"
+
+    b = broadcast.Broadcast.from_line(line)
+    print(b)
+
+
+    """
     items = [ "test%s" % str(x) for x in range(10) ]
     main = urwid.Padding(mk_menu("THIS IS A TEST", items), left=2, right=2)
     top = urwid.Overlay(main, urwid.SolidFill(u'\N{MEDIUM SHADE}'),
@@ -22,3 +30,4 @@ if __name__ == "__main__":
             valign='middle', height=('relative', 60),
             min_width=20, min_height=9)
     urwid.MainLoop(top, palette=[('reversed', 'standout', '')]).run()
+    """
