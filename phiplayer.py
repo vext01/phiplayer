@@ -1,5 +1,9 @@
+import subprocess, sys, re
 import urwid
 import broadcast
+
+GET_IPLAYER="get_iplayer"
+class PhiPlayerError(Exception): pass
 
 def item_chosen(button, choice):
     print("Chose: %s" % choice)
@@ -15,11 +19,27 @@ def mk_menu(title, items):
 
     return urwid.ListBox(urwid.SimpleFocusListWalker(body))
 
-if __name__ == "__main__":
-    line = "1051:   ZingZillas: Series 3 - 17. Like a Firefly, CBeebies, Children's,Entertainment & Comedy,Learning,Pre-School,TV, default"
+def get_broadcast_list():
+    pipe = subprocess.Popen(GET_IPLAYER,
+            shell=True, stdout=subprocess.PIPE).stdout
 
-    b = broadcast.Broadcast.from_line(line)
-    print(b)
+    """
+    for line in pipe:
+        if line.strip() == "Matches:": break
+    else:
+        raise PhiPlayerError("Couldn't find matches marker")
+    """
+
+    bcasts = []
+    for line in pipe:
+        if not re.match("^[0-9]*:", line): continue
+        bcasts.append(broadcast.Broadcast.from_line(line))
+
+    for i in bcasts:
+        print(i)
+
+if __name__ == "__main__":
+    get_broadcast_list()
 
 
     """
