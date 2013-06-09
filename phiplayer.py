@@ -24,18 +24,12 @@ def get_broadcast_list():
     pipe = subprocess.Popen(GET_IPLAYER,
             shell=True, stdout=subprocess.PIPE).stdout
 
-    """
-    for line in pipe:
-        if line.strip() == "Matches:": break
-    else:
-        raise PhiPlayerError("Couldn't find matches marker")
-    """
-
     bcasts = []
     for line in pipe:
         if not re.match("^[0-9]*:", line): continue
         bcasts.append(broadcast.Broadcast.from_line(line))
 
+    pipe.close()
     return bcasts
 
 def broadcast_menu_str(bcast):
